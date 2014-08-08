@@ -1,4 +1,6 @@
 /* global Pallette */
+
+
 function getRandom() {
 	return parseInt(Math.random() * 256);
 }
