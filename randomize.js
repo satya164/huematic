@@ -19,7 +19,7 @@ function normalize(rgb) {
 
 function PalletteFactory() {}
 
-PalletteFactory.prototype.randomizeMix = function (rgbVal, noOfColors) {
+PalletteFactory.prototype.randomizedRGB = function (rgbVal, noOfColors) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
@@ -58,7 +58,7 @@ PalletteFactory.prototype.randomizeMix = function (rgbVal, noOfColors) {
 	return results;
 };
 
-PalletteFactory.prototype.constantMix = function (rgbVal, cmix) {
+PalletteFactory.prototype.constantRGBAverage = function (rgbVal, cmix) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
@@ -93,7 +93,7 @@ PalletteFactory.prototype.constantMix = function (rgbVal, cmix) {
 	}];
 };
 
-PalletteFactory.prototype.complementaryMix = function (rgb) {
+PalletteFactory.prototype.complementaryPallet = function (rgb) {
 	var red = rgb.r;
 	var green = rgb.g;
 	var blue = rgb.b;
@@ -110,24 +110,18 @@ PalletteFactory.prototype.complementaryMix = function (rgb) {
         }];
 };
 
-PalletteFactory.prototype.triadMix = function (rgbVal) {
-	var hslVal = rgbToHsl(rgbVal.r, rgbVal.b, rgbVal.g);
-	var results = [];
-	results.push(hslToRgb(hslVal.h, hslVal.s, hslVal.l));
-	results.push(hslToRgb((hslVal.h + 120)%360, hslVal.s, hslVal.l));
-	results.push(hslToRgb((hslVal.h + 240)%360, hslVal.s, hslVal.l));
-	return results;
+PalletteFactory.prototype.triadPallet = function (rgbVal) {
 };
 
-PalletteFactory.prototype.tetradMix = function (rgbVal) {
+PalletteFactory.prototype.tetradPallet = function (rgbVal) {
 
 };
 
-PalletteFactory.prototype.analogous = function (rgbVal) {
+PalletteFactory.prototype.analogousPallet = function (rgbVal) {
 
 };
 
-PalletteFactory.prototype.monochromaticMix = function (rgb, num_col) {
+PalletteFactory.prototype.monochromaticPallet = function (rgb, num_col) {
 	var red = rgb.r;
 	var green = rgb.g;
 	var blue = rgb.b;
