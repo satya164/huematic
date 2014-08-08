@@ -12,7 +12,7 @@ function normalize(rgb) {
 		color = parseInt(color);
 		color = (color > 255) ? 255 : color;
 		color = (color < 0) ? 0 : color;
-		
+
 		rgb[i] = color;
 	}
 	return rgb;
@@ -59,18 +59,20 @@ PalletteFactory.prototype.randomizeMix = function (rgbVal, noOfColors) {
 	return results;
 };
 
-PalletteFactory.prototype.constantMix = function (rgbVal, cmix) {
+PalletteFactory.prototype.constantMix = function (rgbVal) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
 	var red, green, blue;
-	if (!cmix) {
-		cmix = {
-			r: 216,
-			g: 116,
-			b: 95
-		};
-	}
+
+
+
+	var cmix = {
+		r: 216,
+		g: 116,
+		b: 95
+	};
+
 	red = cmix.r;
 	green = cmix.g;
 	blue = cmix.b;
@@ -172,7 +174,7 @@ PalletteFactory.prototype.monochromaticMix = function (rgb, num_col) {
 		green = green - step;
 		blue = blue - step;
 
-		color_arr.push(normalize ({
+		color_arr.push(normalize({
 			r: red,
 			g: green,
 			b: blue
@@ -207,3 +209,7 @@ console.log(p.monochromaticMix({
 	g: 100,
 	b: 100
 }));
+
+for (var j in p) {
+	console.log("### ", j);
+}
