@@ -1,7 +1,6 @@
 /* global PalletteFactory */
 /* jshint node: true */
 
-
 function getRandom() {
 	return parseInt(Math.random() * 256);
 }
@@ -111,11 +110,16 @@ PalletteFactory.prototype.complementaryMix = function (rgb) {
         }];
 };
 
-PalletteFactory.prototype.triad = function (rgbVal) {
-
+PalletteFactory.prototype.triadMix = function (rgbVal) {
+	var hslVal = rgbToHsl(rgbVal.r, rgbVal.b, rgbVal.g);
+	var results = [];
+	results.push(hslToRgb(hslVal.h, hslVal.s, hslVal.l));
+	results.push(hslToRgb((hslVal.h + 120)%360, hslVal.s, hslVal.l));
+	results.push(hslToRgb((hslVal.h + 240)%360, hslVal.s, hslVal.l));
+	return results;
 };
 
-PalletteFactory.prototype.tetrad = function (rgbVal) {
+PalletteFactory.prototype.tetradMix = function (rgbVal) {
 
 };
 
@@ -204,6 +208,11 @@ console.log(p.complementaryMix({
 
 console.log(p.monochromaticMix({
 	r: 200,
-	g: 100,
+	g: 150,
 	b: 100
 }));
+
+console.log("****");
+
+console.log(rgbToHsl(120, 200, 50));
+console.log(hslToRgb(0.25555555555555554, 0.6000000000000001, 0.49019607843137253));
