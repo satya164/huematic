@@ -1,7 +1,6 @@
 /* global PalletteFactory */
 /* jshint node: true */
 
-
 function getRandom() {
 	return parseInt(Math.random() * 256);
 }
@@ -113,11 +112,16 @@ PalletteFactory.prototype.complementaryMix = function (rgb) {
         }];
 };
 
-PalletteFactory.prototype.triad = function (rgbVal) {
-
+PalletteFactory.prototype.triadMix = function (rgbVal) {
+	var hslVal = rgbToHsl(rgbVal.r, rgbVal.b, rgbVal.g);
+	var results = [];
+	results.push(hslToRgb(hslVal.h, hslVal.s, hslVal.l));
+	results.push(hslToRgb((hslVal.h + 120)%360, hslVal.s, hslVal.l));
+	results.push(hslToRgb((hslVal.h + 240)%360, hslVal.s, hslVal.l));
+	return results;
 };
 
-PalletteFactory.prototype.tetrad = function (rgbVal) {
+PalletteFactory.prototype.tetradMix = function (rgbVal) {
 
 };
 
@@ -185,31 +189,3 @@ PalletteFactory.prototype.monochromaticMix = function (rgb, num_col) {
 };
 
 var p = new PalletteFactory();
-
-console.log(p.randomizeMix({
-	r: 200,
-	g: 100,
-	b: 100
-}, 3));
-
-console.log(p.constantMix({
-	r: 200,
-	g: 100,
-	b: 100
-}));
-
-console.log(p.complementaryMix({
-	r: 200,
-	g: 100,
-	b: 100
-}));
-
-console.log(p.monochromaticMix({
-	r: 200,
-	g: 100,
-	b: 100
-}));
-
-for (var j in p) {
-	console.log("### ", j);
-}

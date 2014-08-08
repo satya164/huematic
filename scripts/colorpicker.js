@@ -1,10 +1,40 @@
 /* jshint browser: true */
-/* global $ */
+/* global $, p */
 
 // Self executing function
 var Palette = (function() {
 	return function() {
 		var self = this;
+
+		self.colorObj = function(color) {
+			var palettes = [];
+
+			if(typeof p === "object"){
+				for(var i in p){
+					palettes.push(p[i](color));
+				}
+			}
+
+			return palettes;
+		};
+
+		self.getPalettes = function(color) {
+			var palettes = [];
+
+			if(typeof p === "object"){
+				for(var i in p){
+						palettes.push(p[i](color));
+				}
+			}
+
+			return palettes;
+		};
+
+		self.parseColor = function(colorObj) {
+			if (typeof colorObj === "object"){
+				return "rgb(" + colorObj.r + "," + colorObj.g + "," + colorObj.b + ")";
+			}
+		};
 
 		self.getColor = function(position, canvas) {
 			var imageData = $(canvas).get(0).getContext("2d").getImageData(position[0], position[1], 1, 1).data,
@@ -62,12 +92,14 @@ var Palette = (function() {
 			sheet.fillRect(0, 0, sheet.canvas.width, sheet.canvas.height);
 
 			$canvas.on("click", function(e) {
-				var color = self.getColor(self.getPosition(e), $canvas);
+				var color = self.parseColor(self.getColor(self.getPosition(e), $canvas)),
+					palettes = self.getPalettes(color);
 				
-				console.log(color, getPallette.constantMix(color));
-//				
-//				$value.text(color);
-//				$selected.css({background: color});
+				$value.text(color);
+
+				for (var i =0; i < palettes.length; i++){
+					self.addPalette(palettes[i]);
+				}
 			});
 		};
 
@@ -77,7 +109,7 @@ var Palette = (function() {
 
 			if (colors instanceof Array) {
 				for (var i = 0, l = colors.length; i < l; i++) {
-					$("<li>").css({ background: colors[i] }).appendTo($palette);
+					$("<li>").css({ background: self.parseColor(colors[i]) }).appendTo($palette);
 				}
 
 				$container.append($palette);
