@@ -10,7 +10,11 @@ var Palette = (function() {
 			var imageData = $(canvas).get(0).getContext("2d").getImageData(position[0], position[1], 1, 1).data,
 				color = "rgb(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + ")";
 
-			return color;
+			return {
+				r: imageData[0],
+				g: imageData[1],
+				b: imageData[2]
+			};
 		};
 
 		self.getPosition = function(event) {
@@ -59,8 +63,11 @@ var Palette = (function() {
 
 			$canvas.on("click", function(e) {
 				var color = self.getColor(self.getPosition(e), $canvas);
-				$value.text(color);
-				$selected.css({background: color});
+				
+				console.log(color, getPallette.constantMix(color));
+//				
+//				$value.text(color);
+//				$selected.css({background: color});
 			});
 		};
 

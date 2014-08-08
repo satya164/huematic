@@ -1,13 +1,26 @@
-/* global Pallette */
+/* global PalletteFactory */
+/* jshint node: true */
 
 
 function getRandom() {
 	return parseInt(Math.random() * 256);
 }
 
-function Pallette() {}
+function normalize(rgb) {
+	for (var i in rgb) {
+		var color = rgb[i];
+		color = parseInt(color);
+		color = (color > 255) ? 255 : color;
+		color = (color < 0) ? 0 : color;
+		
+		rgb[i] = color;
+	}
+	return rgb;
+}
 
-Pallette.prototype.randomizeMix = function (rgbVal, noOfColors) {
+function PalletteFactory() {}
+
+PalletteFactory.prototype.randomizeMix = function (rgbVal, noOfColors) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
@@ -46,16 +59,22 @@ Pallette.prototype.randomizeMix = function (rgbVal, noOfColors) {
 	return results;
 };
 
-Pallette.prototype.constantMix = function (rgbVal, cmix) {
+PalletteFactory.prototype.constantMix = function (rgbVal, cmix) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
 	var red, green, blue;
-	if (cmix) {
-		red = cmix.r || 216;
-		green = cmix.g || 115;
-		blue = cmix.b || 95;
+	if (!cmix) {
+		cmix = {
+			r: 216,
+			g: 116,
+			b: 95
+		};
 	}
+	red = cmix.r;
+	green = cmix.g;
+	blue = cmix.b;
+
 
 	// mix colors 
 	if (rgbVal !== null) {
@@ -75,14 +94,14 @@ Pallette.prototype.constantMix = function (rgbVal, cmix) {
 	}];
 };
 
-Pallette.prototye.complementary = function (rgb) {
+PalletteFactory.prototype.complementaryMix = function (rgb) {
 	var red = rgb.r;
 	var green = rgb.g;
 	var blue = rgb.b;
 
 	return [{
-			r: rgb.r, 
-			g: rgb.g, 
+			r: rgb.r,
+			g: rgb.g,
 			b: rgb.b
 		},
 		{
@@ -92,14 +111,99 @@ Pallette.prototye.complementary = function (rgb) {
         }];
 };
 
-Pallette.prototype.triad = function (rgbVal) {
+PalletteFactory.prototype.triad = function (rgbVal) {
 
 };
 
-Pallette.prototype.tetrad = function (rgbVal) {
+PalletteFactory.prototype.tetrad = function (rgbVal) {
 
 };
 
-Pallette.prototype.analogous = function (rgbVal) {
+PalletteFactory.prototype.analogous = function (rgbVal) {
 
 };
+
+PalletteFactory.prototype.monochromaticMix = function (rgb, num_col) {
+	var red = rgb.r;
+	var green = rgb.g;
+	var blue = rgb.b;
+
+	num_col = num_col || 5;
+
+	var step = 255 / (num_col + 1);
+
+	var color_arr = [{
+		r: rgb.r,
+		g: rgb.g,
+		b: rgb.b
+	}];
+	var i;
+
+	for (i = 1; i <= num_col / 2; i++) {
+		if (red > 255 || green > 255 || blue > 255)
+			break;
+
+		red = red + step;
+		green = green + step;
+		blue = blue + step;
+
+
+
+		color_arr.push(normalize({
+			r: red,
+			g: green,
+			b: blue
+		}));
+	}
+
+	red = rgb.r;
+	green = rgb.g;
+	blue = rgb.b;
+
+	var itr = (num_col % 2) === 0 ? parseInt(num_col - num_col / 2) : parseInt(num_col - num_col / 2) + 1;
+
+	console.log("ITR IS ", itr);
+
+	for (i = 1; i <= itr; i++) {
+		if (red < 0 || green < 0 || blue < 0)
+			break;
+
+		red = red - step;
+		green = green - step;
+		blue = blue - step;
+
+		color_arr.push(normalize ({
+			r: red,
+			g: green,
+			b: blue
+		}));
+	}
+
+	return color_arr;
+};
+
+var p = new PalletteFactory();
+
+console.log(p.randomizeMix({
+	r: 200,
+	g: 100,
+	b: 100
+}, 3));
+
+console.log(p.constantMix({
+	r: 200,
+	g: 100,
+	b: 100
+}));
+
+console.log(p.complementaryMix({
+	r: 200,
+	g: 100,
+	b: 100
+}));
+
+console.log(p.monochromaticMix({
+	r: 200,
+	g: 100,
+	b: 100
+}));
