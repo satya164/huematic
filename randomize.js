@@ -11,7 +11,7 @@ function normalize(rgb) {
 		color = parseInt(color);
 		color = (color > 255) ? 255 : color;
 		color = (color < 0) ? 0 : color;
-		
+
 		rgb[i] = color;
 	}
 	return rgb;
@@ -63,13 +63,15 @@ PalletteFactory.prototype.constantRGBAverage = function (rgbVal, cmix) {
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
 	var red, green, blue;
-	if (!cmix) {
-		cmix = {
-			r: 216,
-			g: 116,
-			b: 95
-		};
-	}
+
+
+
+	var cmix = {
+		r: 216,
+		g: 116,
+		b: 95
+	};
+
 	red = cmix.r;
 	green = cmix.g;
 	blue = cmix.b;
@@ -170,7 +172,7 @@ PalletteFactory.prototype.monochromaticPallet = function (rgb, num_col) {
 		green = green - step;
 		blue = blue - step;
 
-		color_arr.push(normalize ({
+		color_arr.push(normalize({
 			r: red,
 			g: green,
 			b: blue
@@ -181,32 +183,3 @@ PalletteFactory.prototype.monochromaticPallet = function (rgb, num_col) {
 };
 
 var p = new PalletteFactory();
-
-console.log(p.randomizeMix({
-	r: 200,
-	g: 100,
-	b: 100
-}, 3));
-
-console.log(p.constantMix({
-	r: 200,
-	g: 100,
-	b: 100
-}));
-
-console.log(p.complementaryMix({
-	r: 200,
-	g: 100,
-	b: 100
-}));
-
-console.log(p.monochromaticMix({
-	r: 200,
-	g: 150,
-	b: 100
-}));
-
-console.log("****");
-
-console.log(rgbToHsl(120, 200, 50));
-console.log(hslToRgb(0.25555555555555554, 0.6000000000000001, 0.49019607843137253));
