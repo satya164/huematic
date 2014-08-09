@@ -64,15 +64,14 @@ PalletteFactory.prototype.average = function (rgbVal) {
 	*/
 	var red, green, blue,
 		cmix = {
-		r: 216,
-		g: 116,
-		b: 95
-	};
+			r: 216,
+			g: 116,
+			b: 95
+		};
 
 	red = cmix.r;
 	green = cmix.g;
 	blue = cmix.b;
-
 
 	// mix colors
 	if (rgbVal !== null) {
@@ -83,7 +82,7 @@ PalletteFactory.prototype.average = function (rgbVal) {
 
 	return [{
 		r: rgbVal.r,
-		g: rgbVal.b,
+		g: rgbVal.g,
 		b: rgbVal.b
 	}, {
 		r: red,
