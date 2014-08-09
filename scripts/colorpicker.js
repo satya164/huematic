@@ -245,7 +245,11 @@ var Palette = (function() {
 
 			if (colors instanceof Array) {
 				for (var i = 0, l = colors.length; i < l; i++) {
-					$("<li>").css({ background: self.parseColor(colors[i]) }).appendTo($list);
+					$("<li>").css({
+						background: self.parseColor(colors[i])
+					})
+					.text(utils.rgbToHex(colors[i]))
+					.appendTo($list);
 				}
 
 				$palette.append(

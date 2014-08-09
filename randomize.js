@@ -19,7 +19,7 @@ function normalize(rgb) {
 
 function PalletteFactory() {}
 
-PalletteFactory.prototype.randomizedRGB = function (rgbVal, noOfColors) {
+PalletteFactory.prototype.randomized = function (rgbVal, noOfColors) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
@@ -58,7 +58,7 @@ PalletteFactory.prototype.randomizedRGB = function (rgbVal, noOfColors) {
 	return results;
 };
 
-PalletteFactory.prototype.constantRGBAverage = function (rgbVal) {
+PalletteFactory.prototype.average = function (rgbVal) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
