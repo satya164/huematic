@@ -29,7 +29,7 @@ PalletteFactory.prototype.randomizedRGB = function (rgbVal, noOfColors) {
 		var green = getRandom();
 		var blue = getRandom();
 
-		// mix colors 
+		// mix colors
 		if (rgbVal !== null) {
 			red = parseInt((red + rgbVal.r) / 2);
 			green = parseInt((green + rgbVal.g) / 2);
@@ -58,15 +58,12 @@ PalletteFactory.prototype.randomizedRGB = function (rgbVal, noOfColors) {
 	return results;
 };
 
-PalletteFactory.prototype.constantRGBAverage = function (rgbVal, cmix) {
+PalletteFactory.prototype.constantRGBAverage = function (rgbVal) {
 	/*
 		Input sample: {r: 234, b: 216, g: 110}
 	*/
-	var red, green, blue;
-
-
-
-	var cmix = {
+	var red, green, blue,
+		cmix = {
 		r: 216,
 		g: 116,
 		b: 95
@@ -77,7 +74,7 @@ PalletteFactory.prototype.constantRGBAverage = function (rgbVal, cmix) {
 	blue = cmix.b;
 
 
-	// mix colors 
+	// mix colors
 	if (rgbVal !== null) {
 		red = parseInt((red + rgbVal.r) / 2);
 		green = parseInt((green + rgbVal.g) / 2);
@@ -95,7 +92,7 @@ PalletteFactory.prototype.constantRGBAverage = function (rgbVal, cmix) {
 	}];
 };
 
-PalletteFactory.prototype.complementaryPallet = function (rgb) {
+PalletteFactory.prototype.complementary = function (rgb) {
 	var red = rgb.r;
 	var green = rgb.g;
 	var blue = rgb.b;
@@ -112,18 +109,18 @@ PalletteFactory.prototype.complementaryPallet = function (rgb) {
         }];
 };
 
-PalletteFactory.prototype.triadPallet = function (rgbVal) {
+PalletteFactory.prototype.triad = function (rgbVal) {
 };
 
-PalletteFactory.prototype.tetradPallet = function (rgbVal) {
-
-};
-
-PalletteFactory.prototype.analogousPallet = function (rgbVal) {
+PalletteFactory.prototype.tetrad = function (rgbVal) {
 
 };
 
-PalletteFactory.prototype.monochromaticPallet = function (rgb, num_col) {
+PalletteFactory.prototype.analogous = function (rgbVal) {
+
+};
+
+PalletteFactory.prototype.monochromatic = function (rgb, num_col) {
 	var red = rgb.r;
 	var green = rgb.g;
 	var blue = rgb.b;
@@ -161,8 +158,6 @@ PalletteFactory.prototype.monochromaticPallet = function (rgb, num_col) {
 	blue = rgb.b;
 
 	var itr = (num_col % 2) === 0 ? parseInt(num_col - num_col / 2) : parseInt(num_col - num_col / 2) + 1;
-
-	console.log("ITR IS ", itr);
 
 	for (i = 1; i <= itr; i++) {
 		if (red < 0 || green < 0 || blue < 0)
