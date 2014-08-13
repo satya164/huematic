@@ -1,0 +1,88 @@
+html, body { height: 100%; }
+
+body {
+    font-family: "Raleway", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+}
+
+h1, h2, h3 { font-weight: 400; }
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3.5em;
+    background-color: #f06760;
+    color: #fff;
+    z-index: 10;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+header .title {
+    max-width: 36em;
+    margin: auto;
+    padding: 1em;
+}
+    
+header .title h1 {
+    font-size: 1.5em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+main {
+    position: absolute;
+    top: 3.5em;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.picker-container {
+    max-width: 36em;
+    margin: auto;
+    padding: 1em;
+    border-bottom: 1px solid #eee;
+}
+
+.picker-item-value {
+    display: inline-block;
+    padding: .5em;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 2px;
+    min-width: 12em;
+}
+
+.picker-item-value:hover, .picker-item-value:focus, .picker-item-value:active {
+  border-color: #f06760;
+  outline: none;
+}
+
+.palettes {
+    max-width: 36em;
+    margin: auto;
+    padding: 1em;
+}
+
+.palettes ul {
+    list-style: none;
+    padding: .5em 0;
+}
+
+.palettes ul li {
+    display: inline-block;
+    height: 48px;
+    width: 96px;
+    margin: .25em .5em .25em 0;
+    border-radius: 2px;
+    padding: 1em;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}

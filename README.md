@@ -1,2 +1,4 @@
-palette
-=======
+Huematic
+========
+
+Color palette generator
