@@ -145,4 +145,4 @@ var Huematic = (function() {
 var huematic = new Huematic();
 
 huematic.showPicker();
-huematic.setColor("#f06760");
+huematic.setColor("#f06860");

@@ -15,7 +15,7 @@ header {
     left: 0;
     width: 100%;
     height: 3.5em;
-    background-color: #f06760;
+    background-color: #f06860;
     color: #fff;
     z-index: 10;
     box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.15);
@@ -59,7 +59,7 @@ main {
 }
 
 .picker-item-value:hover, .picker-item-value:focus, .picker-item-value:active {
-  border-color: #f06760;
+  border-color: #f06860;
   outline: none;
 }
 
