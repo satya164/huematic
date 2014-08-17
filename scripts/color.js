@@ -532,188 +532,236 @@ var Color = (function() {
                 }
             },
 
-            getComponents: function(color) {
-                var models = {
-                        hex: function(color) {
-                            var hex;
+            normalizeColor: function(c) {
+                return {
+                    rgb: [
+                        Math.round(Math.max(Math.min(c.rgb[0], 255), 0)),
+                        Math.round(Math.max(Math.min(c.rgb[1], 255), 0)),
+                        Math.round(Math.max(Math.min(c.rgb[2], 255), 0))
+                    ],
+                    hsl: [
+                        Math.round(Math.max(Math.min(c.hsl[0], 360), 0)),
+                        Math.round(Math.max(Math.min(c.hsl[1], 100), 0)),
+                        Math.round(Math.max(Math.min(c.hsl[2], 100), 0))
+                    ],
+                    hsv: [
+                        Math.round(Math.max(Math.min(c.hsv[0], 360), 0)),
+                        Math.round(Math.max(Math.min(c.hsv[1], 100), 0)),
+                        Math.round(Math.max(Math.min(c.hsv[2], 100), 0))
+                    ],
+                    cmyk: [
+                        Math.round(Math.max(Math.min(c.cmyk[0], 100), 0)),
+                        Math.round(Math.max(Math.min(c.cmyk[1], 100), 0)),
+                        Math.round(Math.max(Math.min(c.cmyk[2], 100), 0)),
+                        Math.round(Math.max(Math.min(c.cmyk[3], 100), 0))
+                    ],
+                    lab: [
+                        Math.round(Math.max(Math.min(c.lab[0], 100), 0)),
+                        Math.round(Math.max(Math.min(c.lab[1], 127), -128)),
+                        Math.round(Math.max(Math.min(c.lab[2], 127), -128))
+                    ],
+                    alpha: Math.max(Math.min(c.alpha, 1), 0)
+                };
+            },
 
-                            if (color.length === 4) {
-                                color = color.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) {
-                                    return "#" + r + r + g + g + b + b;
-                                });
-                            }
+            parseObj: function(c) {
+                var rgb, hsl, hsv, cmyk, lab, alpha;
 
-                            hex = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i).exec(color);
-
-                            return {
-                                rgb: [
-                                    parseInt(hex[1], 16),
-                                    parseInt(hex[2], 16),
-                                    parseInt(hex[3], 16)
-                                ]
-                            };
-                        },
-                        rgb: function(color) {
-                            var rgb = color.replace(/[rgba()]/g, "").split(",");
-
-                            return {
-                                rgb: [
-                                    parseInt(rgb[0], 10),
-                                    parseInt(rgb[1], 10),
-                                    parseInt(rgb[2], 10)
-                                ],
-                                alpha: parseFloat(rgb[3])
-                            };
-                        },
-                        hsl: function(color) {
-                            var hsl = color.replace(/[hsla()]/g, "").split(",");
-
-                            return {
-                                hsl: [
-                                    parseInt(hsl[0], 10),
-                                    parseInt(hsl[1], 10),
-                                    parseInt(hsl[2], 10)
-                                ],
-                                alpha: parseFloat(hsl[3])
-                            };
-                        },
-                        hsv: function(color) {
-                            var hsv = color.replace(/[hsva()]/g, "").split(",");
-
-                            return {
-                                hsv: [
-                                    parseInt(hsv[0], 10),
-                                    parseInt(hsv[1], 10),
-                                    parseInt(hsv[2], 10)
-                                ],
-                                alpha: parseFloat(hsv[3])
-                            };
-                        },
-                        cmyk: function(color) {
-                            var cmyk = color.replace(/[cmyk()]/g, "").split(",");
-
-                            return {
-                                cmyk: [
-                                    parseInt(cmyk[0], 10),
-                                    parseInt(cmyk[1], 10),
-                                    parseInt(cmyk[2], 10),
-                                    parseInt(cmyk[3], 10)
-                                ]
-                            };
-                        },
-                        lab: function(color) {
-                            var lab = color.replace(/[lab()]/g, "").split(",");
-
-                            return {
-                                lab: [
-                                    parseInt(lab[0], 10),
-                                    parseInt(lab[1], 10),
-                                    parseInt(lab[2], 10)
-                                ]
-                            };
-                        },
-                        name: function(color) {
-                            if (color && typeof color == "string") {
-                                color = color.toLowerCase();
-                            }
-
-                            return { rgb: _names[color] };
-                        }
-                    },
-                    c = {},
-                    type = _fn.getType(color);
-
-                if (typeof models[type] === "function") {
-                    c = models[type].call(null, color);
+                if (c.rgb && c.rgb instanceof Array) {
+                    rgb =  c.rgb;
+                    hsl = _convert.rgb2hsl(rgb);
+                    hsv = _convert.rgb2hsv(rgb);
+                    cmyk = _convert.rgb2cmyk(rgb);
+                    lab = _convert.xyz2lab(_convert.rgb2xyz(rgb));
+                } else if (c.hsl && c.hsl instanceof Array) {
+                    hsl = c.hsl;
+                    rgb = _convert.hsl2rgb(hsl);
+                    hsv = _convert.hsl2hsv(hsl);
+                    cmyk = _convert.rgb2cmyk(rgb);
+                    lab = _convert.xyz2lab(_convert.rgb2xyz(rgb));
+                } else if (c.hsv && c.hsv instanceof Array) {
+                    hsv = c.hsv;
+                    rgb = _convert.hsl2rgb(hsv);
+                    hsl = _convert.hsv2hsl(hsv);
+                    cmyk = _convert.rgb2cmyk(rgb);
+                    lab = _convert.xyz2lab(_convert.rgb2xyz(rgb));
+                } else if (c.cmyk && c.cmyk instanceof Array) {
+                    cmyk = c.cmyk;
+                    rgb = _convert.cmyk2rgb(cmyk);
+                    hsl = _convert.rgb2hsl(rgb);
+                    hsv = _convert.rgb2hsv(rgb);
+                    lab = _convert.xyz2lab(_convert.rgb2xyz(rgb));
+                } else if (c.lab && c.lab instanceof Array) {
+                    lab = c.lab;
+                    rgb = _convert.xyz2rgb(_convert.lab2xyz(lab));
+                    hsl = _convert.rgb2hsl(rgb);
+                    hsv = _convert.rgb2hsv(rgb);
+                    cmyk = _convert.rgb2cmyk(rgb);
                 } else {
-                    for (var t in models) {
-                        c[t] = color[t];
-                    }
+                    rgb =  [ 0, 0, 0 ];
+                    hsl =  [ 0, 0, 0 ];
+                    hsv =  [ 0, 0, 0 ];
+                    cmyk =  [ 0, 0, 0 ];
+                    lab =  [ 0, 0, 0 ];
                 }
 
-                c.rgb = (function() {
-                    if (c.rgb instanceof Array) {
-                        return c.rgb;
-                    } else if (c.hsl instanceof Array) {
-                        return _convert.hsl2rgb(c.hsl);
-                    } else if (c.hsv instanceof Array) {
-                        return _convert.hsv2rgb(c.hsv);
-                    } else if (c.cmyk instanceof Array) {
-                        return _convert.cmyk2rgb(c.cmyk);
-                    } else if (c.lab instanceof Array) {
-                        return _convert.xyz2rgb(_convert.lab2xyz(c.lab));
-                    } else {
-                        return [ 0, 0, 0 ];
-                    }
-                }());
+                alpha = isNaN(c.alpha) ? 1 : c.alpha;
 
-                c.hsl = (function() {
-                    if (c.hsl instanceof Array) {
-                        return c.hsl;
-                    } else if (c.hsv instanceof Array) {
-                        return _convert.hsv2hsl(c.hsv);
-                    } else if (c.rgb instanceof Array) {
-                        return _convert.rgb2hsl(c.rgb);
-                    } else if (c.cmyk instanceof Array) {
-                        return _convert.rgb2hsl(_convert.cmyk2rgb(c.cmyk));
-                    } else if (c.lab instanceof Array) {
-                        return _convert.rgb2hsl(_convert.xyz2rgb(_convert.lab2xyz(c.lab)));
-                    } else {
-                        return [ 0, 0, 0 ];
-                    }
-                }());
+                return _fn.normalizeColor({
+                    rgb: rgb,
+                    hsl: hsl,
+                    hsv: hsv,
+                    cmyk: cmyk,
+                    lab: lab,
+                    alpha: alpha
+                });
+            },
 
-                c.hsv = (function() {
-                    if (c.hsv instanceof Array) {
-                        return c.hsv;
-                    } else if (c.hsl instanceof Array) {
-                        return _convert.hsl2hsv(c.hsl);
-                    } else if (c.rgb instanceof Array) {
-                        return _convert.rgb2hsv(c.rgb);
-                    } else if (c.cmyk instanceof Array) {
-                        return _convert.rgb2hsv(_convert.cmyk2rgb(c.cmyk));
-                    } else if (c.lab instanceof Array) {
-                        return _convert.rgb2hsv(_convert.xyz2rgb(_convert.lab2xyz(c.lab)));
-                    } else {
-                        return [ 0, 0, 0 ];
-                    }
-                }());
+            parseName: function(color) {
+                var rgb;
 
-                c.cmyk = (function() {
-                    if (c.cmyk instanceof Array) {
-                        return c.cmyk;
-                    } else if (c.rgb instanceof Array) {
-                        return _convert.rgb2cmyk(c.rgb);
-                    } else if (c.hsl instanceof Array) {
-                        return _convert.rgb2cmyk(_convert.hsl2rgb(c.hsl));
-                    } else if (c.hsv instanceof Array) {
-                        return _convert.rgb2cmyk(_convert.hsl2rgb(c.hsv));
-                    } else if (c.lab instanceof Array) {
-                        return _convert.rgb2cmyk(_convert.xyz2rgb(_convert.lab2xyz(c.lab)));
-                    } else {
-                        return [ 0, 0, 0 ];
-                    }
-                }());
+                if (color && typeof color == "string") {
+                    color = color.toLowerCase();
+                }
 
-                c.lab = (function() {
-                    if (c.lab instanceof Array) {
-                        return c.lab;
-                    } else if (c.rgb instanceof Array) {
-                        return _convert.xyz2lab(_convert.rgb2xyz(c.rgb));
-                    } else if (c.cmyk instanceof Array) {
-                        return _convert.xyz2lab(_convert.rgb2xyz(_convert.cmyk2rgb(c.cmyk)));
-                    } else if (c.hsl instanceof Array) {
-                        return _convert.xyz2lab(_convert.rgb2xyz(_convert.hsl2rgb(c.hsl)));
-                    } else if (c.hsv instanceof Array) {
-                        return _convert.xyz2lab(_convert.rgb2xyz(_convert.hsl2rgb(c.hsv)));
-                    } else {
-                        return [ 0, 0, 0 ];
-                    }
-                }());
+                rgb = _names[color] || [ 0, 0, 0 ];
 
-                c.alpha = (typeof c.alpha === "number" && (c.alpha || c.alpha === 0)) ? Math.max(Math.min(c.alpha, 1), 0) : 1;
+                return _fn.parseObj({ rgb: rgb });
+            },
 
-                return c;
+            parseHex: function(color) {
+                var hex, rgb;
+
+                if (color.length === 4) {
+                    color = color.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) {
+                        return "#" + r + r + g + g + b + b;
+                    });
+                }
+
+                hex = (/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i).exec(color);
+
+                rgb = [
+                    parseInt(hex[1], 16),
+                    parseInt(hex[2], 16),
+                    parseInt(hex[3], 16)
+                ];
+
+                return _fn.parseObj({ rgb: rgb });
+            },
+
+            parseRGB: function(color) {
+                var arr, rgb, alpha;
+
+                arr = color.replace(/[rgba()]/g, "").split(",");
+
+                rgb = [
+                    parseInt(arr[0], 10),
+                    parseInt(arr[1], 10),
+                    parseInt(arr[2], 10)
+                ];
+
+                alpha = parseFloat(arr[3]);
+
+                return _fn.parseObj({
+                    rgb: rgb,
+                    alpha: alpha
+                });
+            },
+
+            parseHSL: function(color) {
+                var arr, hsl, rgb, alpha;
+
+                arr = color.replace(/[hsla()]/g, "").split(",");
+
+                hsl = [
+                    parseInt(arr[0], 10),
+                    parseInt(arr[1], 10),
+                    parseInt(arr[2], 10)
+                ];
+
+                alpha = parseFloat(arr[3]);
+
+                return _fn.parseObj({
+                    hsl: hsl,
+                    alpha: alpha
+                });
+            },
+
+            parseHSV: function(color) {
+                var arr, hsv, rgb, alpha;
+
+                arr = color.replace(/[hsva()]/g, "").split(",");
+
+                hsv = [
+                    parseInt(arr[0], 10),
+                    parseInt(arr[1], 10),
+                    parseInt(arr[2], 10)
+                ];
+
+                alpha = parseFloat(arr[3]);
+
+                return _fn.parseObj({
+                    hsv: hsv,
+                    alpha: alpha
+                });
+            },
+
+            parseCMYK: function(color) {
+                var arr, cmyk, rgb, alpha;
+
+                arr = color.replace(/[cmyk()]/g, "").split(",");
+
+                cmyk = [
+                    parseInt(arr[0], 10),
+                    parseInt(arr[1], 10),
+                    parseInt(arr[2], 10),
+                    parseInt(arr[3], 10)
+                ];
+
+                return _fn.parseObj({
+                    cmyk: cmyk,
+                    alpha: alpha
+                });
+            },
+
+            parseLAB: function(color) {
+                var arr, lab, rgb, alpha;
+
+                arr = color.replace(/[lab()]/g, "").split(",");
+
+                lab = [
+                    parseInt(arr[0], 10),
+                    parseInt(arr[1], 10),
+                    parseInt(arr[2], 10)
+                ];
+
+                return _fn.parseObj({
+                    lab: lab,
+                    alpha: alpha
+                });
+            },
+
+            getComponents: function(color) {
+                var type = _fn.getType(color);
+
+                switch (type) {
+                    case "name":
+                        return _fn.parseName(color);
+                    case "hex":
+                        return _fn.parseHex(color);
+                    case "rgb":
+                        return _fn.parseRGB(color);
+                    case "hsl":
+                        return _fn.parseHSL(color);
+                    case "hsv":
+                        return _fn.parseHSV(color);
+                    case "cmyk":
+                        return _fn.parseCMYK(color);
+                    case "lab":
+                        return _fn.parseLAB(color);
+                    default:
+                        return _fn.parseObj(color);
+                }
             },
 
             getScheme: function(hsl, degrees) {
@@ -735,254 +783,293 @@ var Color = (function() {
     function ColorConstructor(color) {
         var components;
 
-        if (!color) {
-            color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
-        }
+        // Set a random color if no color was given
+        color = color || "#" + ((1 << 24) * Math.random() | 0).toString(16);
 
         // Properties
         components = _fn.getComponents(color);
 
         for (var c in components) {
             if (components.hasOwnProperty(c)) {
-                this[c] = components[c];
+                Object.defineProperty(this, c, {
+                    value: components[c],
+                    writable: false,
+                    enumerable: true
+                });
             }
         }
     }
 
     // Methods
-    ColorConstructor.prototype.tohex = function() {
-        var r = ("0" + parseInt(this.rgb[0], 10).toString(16)).slice(-2),
-            g = ("0" + parseInt(this.rgb[1], 10).toString(16)).slice(-2),
-            b = ("0" + parseInt(this.rgb[2], 10).toString(16)).slice(-2);
+    ColorConstructor.prototype = {
+        tohex: function() {
+            var r = ("0" + parseInt(this.rgb[0], 10).toString(16)).slice(-2),
+                g = ("0" + parseInt(this.rgb[1], 10).toString(16)).slice(-2),
+                b = ("0" + parseInt(this.rgb[2], 10).toString(16)).slice(-2);
 
-        return "#" + r + g + b;
-    };
+            return "#" + r + g + b;
+        },
 
-    ColorConstructor.prototype.torgb = function() {
-        return "rgba(" + this.rgb[0] + "," + this.rgb[1] + "," + this.rgb[2] + "," + this.alpha + ")";
-    };
+        torgb: function() {
+            return "rgb(" + this.rgb[0] + "," + this.rgb[1] + "," + this.rgb[2] + ")";
+        },
 
-    ColorConstructor.prototype.tohsl = function() {
-        return "hsla(" + this.hsl[0] + "," + this.hsl[1] + "%," + this.hsl[2] + "%," + this.alpha + ")";
-    };
+        torgba: function() {
+            return "rgba(" + this.rgb[0] + "," + this.rgb[1] + "," + this.rgb[2] + "," + this.alpha + ")";
+        },
 
-    ColorConstructor.prototype.tohsv = function() {
-        return "hsva(" + this.hsv[0] + "," + this.hsv[1] + "%," + this.hsv[2] + "%," + this.alpha + ")";
-    };
+        tohsl: function() {
+            return "hsl(" + this.hsl[0] + "," + this.hsl[1] + "%," + this.hsl[2] + "%)";
+        },
 
-    ColorConstructor.prototype.tocmyk = function() {
-        return "cmyk(" + this.cmyk[0] + "," + this.cmyk[1] + "," + this.cmyk[2] + "," + this.cmyk[3] + ")";
-    };
+        tohsla: function() {
+            return "hsla(" + this.hsl[0] + "," + this.hsl[1] + "%," + this.hsl[2] + "%," + this.alpha + ")";
+        },
 
-    ColorConstructor.prototype.tolab = function() {
-        return "lab(" + this.lab[0] + "," + this.lab[1] + "," + this.lab[2] + ")";
-    };
+        tohsv: function() {
+            return "hsv(" + this.hsv[0] + "," + this.hsv[1] + "%," + this.hsv[2] + "%)";
+        },
 
-    ColorConstructor.prototype.name = function() {
-        var name;
+        tohsva: function() {
+            return "hsva(" + this.hsv[0] + "," + this.hsv[1] + "%," + this.hsv[2] + "%," + this.alpha + ")";
+        },
 
-        for (var n in _names) {
-            if (_names.hasOwnProperty(n) && _names[n].join(",") === this.rgb.join(",")) {
-                name = n;
-                break;
+        tocmyk: function() {
+            return "cmyk(" + this.cmyk[0] + "," + this.cmyk[1] + "," + this.cmyk[2] + "," + this.cmyk[3] + ")";
+        },
+
+        tolab: function() {
+            return "lab(" + this.lab[0] + "," + this.lab[1] + "," + this.lab[2] + ")";
+        },
+
+        name: function() {
+            var name;
+
+            for (var n in _names) {
+                if (_names.hasOwnProperty(n) && _names[n].join(",") === this.rgb.join(",")) {
+                    name = n;
+                    break;
+                }
             }
+
+            return name;
+        },
+
+        luminance: function() {
+            var lum = [],
+                chan;
+
+            for (var i = 0; i < this.rgb.length; i++) {
+                chan = this.rgb[i] / 255;
+
+                lum[i] = (chan <= 0.03928) ? (chan / 12.92) : Math.pow(((chan + 0.055) / 1.055), 2.4);
+            }
+
+            return 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+        },
+
+        darkness: function() {
+            var yiq = (this.rgb[0] * 299 + this.rgb[1] * 587 + this.rgb[2] * 114) / 1000;
+
+            return yiq / 255;
+        },
+
+        // Color manipulation
+        lighten: function(ratio) {
+            var hsl = this.hsl.slice(0);
+
+            hsl[2] += hsl[2] * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                hsl: hsl,
+                alpha: this.alpha
+            });
+        },
+
+        darken: function(ratio) {
+            var hsl = this.hsl.slice(0);
+
+            hsl[2] -= hsl[2] * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                hsl: hsl,
+                alpha: this.alpha
+            });
+        },
+
+        saturate: function(ratio) {
+            var hsl = this.hsl.slice(0);
+
+            hsl[1] += hsl[1] * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                hsl: hsl,
+                alpha: this.alpha
+            });
+        },
+
+        desaturate: function(ratio) {
+            var hsl = this.hsl.slice(0);
+
+            hsl[1] -= hsl[1] * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                hsl: hsl,
+                alpha: this.alpha
+            });
+        },
+
+        rotate: function(degrees) {
+            var hsl = this.hsl.slice(0);
+
+            hsl[0] = (hsl[0] + degrees) % 360;
+            hsl[0] = hsl[0] < 0 ? 360 + hsl[0] : hsl[0];
+
+            return _fn.colorObj({
+                hsl: hsl,
+                alpha: this.alpha
+            });
+        },
+
+        mix: function(newColor, weight) {
+            weight = 1 - (weight ? weight : 0.5);
+
+            var c = _fn.colorObj(newColor),
+                t1 = (weight * 2) - 1,
+                d = this.alpha() - c.alpha(),
+                weight1 = (((t1 * d === -1) ? t1 : (t1 + d) / (1 + t1 * d)) + 1) / 2,
+                weight2 = 1 - weight1,
+                rgb = [],
+                alpha;
+
+            for (var i = 0; i < this.rgb.length; i++) {
+                rgb[i] = this.rgb[i] * weight1 + c.rgb[i] * weight2;
+            }
+
+            alpha = this.alpha() * weight + c.alpha() * (1 - weight);
+
+            return _fn.colorObj({
+                rgb: rgb,
+                alpha: alpha
+            });
+        },
+
+        negate: function() {
+            var rgb = [];
+
+            for (var i = 0; i < 3; i++) {
+                rgb[i] = 255 - this.rgb[i];
+            }
+
+            return _fn.colorObj({
+                rgb: rgb,
+                alpha: this.alpha
+            });
+        },
+
+        greyscale: function() {
+            var val = (this.rgb[0] * 0.3) + (this.rgb[1] * 0.59) + (this.rgb[2] * 0.11);
+
+            return _fn.colorObj({
+                rgb: [ val, val, val ],
+                alpha: this.alpha
+            });
+        },
+
+        fadein: function(ratio) {
+            var alpha = this.alpha;
+
+            alpha += alpha * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                rgb: this.rgb,
+                alpha: alpha
+            });
+        },
+
+        fadeout: function(ratio) {
+            var alpha = this.alpha;
+
+            alpha -= alpha * Math.max(Math.min(ratio, 1), 0);
+
+            return _fn.colorObj({
+                rgb: this.rgb,
+                alpha: alpha
+            });
+        },
+
+        // Color schemes
+        complementaryScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 180 ]);
+        },
+
+        splitComplementaryScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 150, 320 ]);
+        },
+
+        splitComplementaryCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 150, 300 ]);
+        },
+
+        splitComplementaryCCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 60, 210 ]);
+        },
+
+        triadicScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 120, 240 ]);
+        },
+
+        clashScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 90, 270 ]);
+        },
+
+        tetradicScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 90, 180, 270 ]);
+        },
+
+        neutralScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 15, 30, 45, 60, 75 ]);
+        },
+
+        analogousScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 30, 60, 90, 120, 150 ]);
+        },
+
+        fourToneCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 60, 180, 240 ]);
+        },
+
+        fourToneCCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 120, 180, 300 ]);
+        },
+
+        fiveToneAScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 115, 155, 205, 245 ]);
+        },
+
+        fiveToneBScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 40, 90, 130, 245 ]);
+        },
+
+        fiveToneCScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 50, 90, 205, 320 ]);
+        },
+
+        fiveToneDScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 40, 155, 270, 310 ]);
+        },
+
+        fiveToneEScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 115, 2, 30, 270, 320 ]);
+        },
+
+        sixToneCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 30, 120, 150, 240, 270 ]);
+        },
+
+        sixToneCCWScheme: function() {
+            return _fn.getScheme(this.hsl, [ 0, 90, 120, 210, 240, 330 ]);
         }
-
-        return name;
-    };
-
-    ColorConstructor.prototype.luminance = function() {
-        var lum = [],
-            chan;
-
-        for (var i = 0; i < this.rgb.length; i++) {
-            chan = this.rgb[i] / 255;
-
-            lum[i] = (chan <= 0.03928) ? (chan / 12.92) : Math.pow(((chan + 0.055) / 1.055), 2.4);
-        }
-
-        return 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
-    };
-
-    ColorConstructor.prototype.darkness = function() {
-        var yiq = (this.rgb[0] * 299 + this.rgb[1] * 587 + this.rgb[2] * 114) / 1000;
-
-        return yiq / 255;
-    };
-
-    // Color manipulation
-    ColorConstructor.prototype.lighten = function(ratio) {
-        var hsl = this.hsl.slice(0);
-
-        hsl[2] += hsl[2] * Math.max(Math.min(ratio, 1), 0);
-
-        return _fn.colorObj({
-            hsl: hsl,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.darken = function(ratio) {
-        var hsl = this.hsl.slice(0);
-
-        hsl[2] -= hsl[2] * Math.max(Math.min(ratio, 1), 0);
-
-        return _fn.colorObj({
-            hsl: hsl,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.saturate = function(ratio) {
-        var hsl = this.hsl.slice(0);
-
-        hsl[1] += hsl[1] * Math.max(Math.min(ratio, 1), 0);
-
-        return _fn.colorObj({
-            hsl: hsl,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.desaturate = function(ratio) {
-        var hsl = this.hsl.slice(0);
-
-        hsl[1] -= hsl[1] * Math.max(Math.min(ratio, 1), 0);
-
-        return _fn.colorObj({
-            hsl: hsl,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.rotate = function(degrees) {
-        var hsl = this.hsl.slice(0);
-
-        hsl[0] = (hsl[0] + degrees) % 360;
-        hsl[0] = hsl[0] < 0 ? 360 + hsl[0] : hsl[0];
-
-        return _fn.colorObj({
-            hsl: hsl,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.mix = function(newColor, weight) {
-        weight = 1 - (weight ? weight : 0.5);
-
-        var c = _fn.colorObj(newColor),
-            t1 = (weight * 2) - 1,
-            d = this.alpha() - c.alpha(),
-            weight1 = (((t1 * d === -1) ? t1 : (t1 + d) / (1 + t1 * d)) + 1) / 2,
-            weight2 = 1 - weight1,
-            rgb = [],
-            alpha;
-
-        for (var i = 0; i < this.rgb.length; i++) {
-            rgb[i] = this.rgb[i] * weight1 + c.rgb[i] * weight2;
-        }
-
-        alpha = this.alpha() * weight + c.alpha() * (1 - weight);
-
-        return _fn.colorObj({
-            rgb: rgb,
-            alpha: alpha
-        });
-    };
-
-    ColorConstructor.prototype.negate = function() {
-        var rgb = [];
-
-        for (var i = 0; i < 3; i++) {
-            rgb[i] = 255 - this.rgb[i];
-        }
-
-        return _fn.colorObj({
-            rgb: rgb,
-            alpha: this.alpha
-        });
-    };
-
-    ColorConstructor.prototype.greyscale = function() {
-        var val = (this.rgb[0] * 0.3) + (this.rgb[1] * 0.59) + (this.rgb[2] * 0.11);
-
-        return _fn.colorObj({
-            rgb: [ val, val, val ],
-            alpha: this.alpha
-        });
-    };
-
-    // Color schemes
-    ColorConstructor.prototype.complementaryScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 180 ]);
-    };
-
-    ColorConstructor.prototype.splitComplementaryScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 150, 320 ]);
-    };
-
-    ColorConstructor.prototype.splitComplementaryCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 150, 300 ]);
-    };
-
-    ColorConstructor.prototype.splitComplementaryCCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 60, 210 ]);
-    };
-
-    ColorConstructor.prototype.triadicScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 120, 240 ]);
-    };
-
-    ColorConstructor.prototype.clashScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 90, 270 ]);
-    };
-
-    ColorConstructor.prototype.tetradicScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 90, 180, 270 ]);
-    };
-
-    ColorConstructor.prototype.neutralScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 15, 30, 45, 60, 75 ]);
-    };
-
-    ColorConstructor.prototype.analogousScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 30, 60, 90, 120, 150 ]);
-    };
-
-    ColorConstructor.prototype.fourToneCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 60, 180, 240 ]);
-    };
-
-    ColorConstructor.prototype.fourToneCCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 120, 180, 300 ]);
-    };
-
-    ColorConstructor.prototype.fiveToneAScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 115, 155, 205, 245 ]);
-    };
-
-    ColorConstructor.prototype.fiveToneBScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 40, 90, 130, 245 ]);
-    };
-
-    ColorConstructor.prototype.fiveToneCScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 50, 90, 205, 320 ]);
-    };
-
-    ColorConstructor.prototype.fiveToneDScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 40, 155, 270, 310 ]);
-    };
-
-    ColorConstructor.prototype.fiveToneEScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 115, 2, 30, 270, 320 ]);
-    };
-
-    ColorConstructor.prototype.sixToneCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 30, 120, 150, 240, 270 ]);
-    };
-
-    ColorConstructor.prototype.sixToneCCWScheme = function() {
-        return _fn.getScheme(this.hsl, [ 0, 90, 120, 210, 240, 330 ]);
     };
 
     return ColorConstructor;

@@ -22,7 +22,7 @@ header {
 }
 
 header .title {
-    max-width: 36em;
+    max-width: 45em;
     margin: auto;
     padding: 1em;
 }
@@ -43,7 +43,7 @@ main {
 }
 
 .picker-container {
-    max-width: 36em;
+    max-width: 45em;
     margin: auto;
     padding: 1em;
     border-bottom: 1px solid #eee;
@@ -51,10 +51,10 @@ main {
 
 .picker-item-value {
     display: inline-block;
-    padding: .5em;
+    margin: 1em 0;
+    padding: 1em;
     border: 1px solid #ccc;
     background-color: #fff;
-    border-radius: 2px;
     min-width: 12em;
 }
 
@@ -64,7 +64,7 @@ main {
 }
 
 .palettes {
-    max-width: 36em;
+    max-width: 45em;
     margin: auto;
     padding: 1em;
 }
@@ -78,8 +78,7 @@ main {
     display: inline-block;
     height: 48px;
     width: 96px;
-    margin: .25em .5em .25em 0;
-    border-radius: 2px;
+    margin: .25em 0;
     padding: 1em;
     font-weight: 700;
     text-align: center;

@@ -1,29 +1,11 @@
 /* jshint browser: true */
-/* global $, p */
+/* global $, Color */
 
-var Palette = (function() {
+var Huematic = (function() {
     var currentHex;
 
     return function() {
         var _this = this;
-
-        _this.getPalettes = function(color) {
-            var palettes = {};
-
-            if(typeof p === "object"){
-                for(var i in p){
-                    palettes[i.charAt(0).toUpperCase() + i.slice(1)] = p[i](color);
-                }
-            }
-
-            return palettes;
-        };
-
-        _this.parseColor = function(colorObj) {
-            if (typeof colorObj === "object"){
-                return "rgb(" + colorObj.r + "," + colorObj.g + "," + colorObj.b + ")";
-            }
-        };
 
         _this.getColor = function(position, canvas) {
             var imageData = $(canvas).get(0).getContext("2d").getImageData(position[0], position[1], 1, 1).data,
@@ -42,30 +24,24 @@ var Palette = (function() {
             return [ posX, posY ];
         };
 
-        _this.showPicker = function() {
-            var $container = $(".picker-container"),
-                $picker = $container.find(".picker-item-color"),
-                $value = $container.find(".picker-item-value"),
-                $canvas = $picker.find("canvas"),
-                sheet, img, gradient;
+        _this.drawSheet = function(sheet, width, height) {
+            var gradient = sheet.createLinearGradient(0, 0, width, 0);
 
-            sheet = $canvas.get(0).getContext("2d");
-            img = new Image();
-            gradient = sheet.createLinearGradient(0, 0, $canvas.width(), 0);
+            sheet.canvas.width = width;
+            sheet.canvas.height = height;
 
-            sheet.canvas.width = $canvas.parent().innerWidth();
-
-            gradient.addColorStop(0,    "rgb(255,   0,   0)");
+            gradient.addColorStop(0.00, "rgb(255,   0,   0)");
             gradient.addColorStop(0.15, "rgb(255,   0, 255)");
             gradient.addColorStop(0.33, "rgb(0,     0, 255)");
             gradient.addColorStop(0.49, "rgb(0,   255, 255)");
             gradient.addColorStop(0.67, "rgb(0,   255,   0)");
             gradient.addColorStop(0.84, "rgb(255, 255,   0)");
+            gradient.addColorStop(1.00, "rgb(255,   0,   0)");
 
             sheet.fillStyle = gradient;
             sheet.fillRect(0, 0, sheet.canvas.width, sheet.canvas.height);
 
-            gradient = sheet.createLinearGradient(0, 0, 0, $canvas.height());
+            gradient = sheet.createLinearGradient(0, 0, 0, height);
             gradient.addColorStop(0,   "rgba(255, 255, 255, 1)");
             gradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
             gradient.addColorStop(0.5, "rgba(0,     0,   0, 0)");
@@ -73,6 +49,29 @@ var Palette = (function() {
 
             sheet.fillStyle = gradient;
             sheet.fillRect(0, 0, sheet.canvas.width, sheet.canvas.height);
+        };
+
+        _this.showPicker = function() {
+            var $container = $(".picker-container"),
+                $picker = $container.find(".picker-item-color"),
+                $value = $container.find(".picker-item-value"),
+                $canvas = $picker.find("canvas"),
+                $parent = $canvas.parent(),
+                sheet, gradient;
+
+            sheet = $canvas.get(0).getContext("2d");
+
+            _this.drawSheet(sheet, $parent.innerWidth(), $parent.innerHeight());
+
+            $(window).on("resize", function() {
+                clearTimeout($(this).data("resizeTimer"));
+
+                $(this).data("resizeTimer", setTimeout(function() {
+                    $parent = $canvas.parent();
+
+                    _this.drawSheet(sheet, $parent.innerWidth(), $parent.innerHeight());
+                }, 250));
+            });
 
             $canvas.on("click", function(e) {
                 var color = _this.getColor(_this.getPosition(e), $canvas);
@@ -80,8 +79,8 @@ var Palette = (function() {
                 _this.setColor(color);
             });
 
-            $value.on("DOMSubtreeModified input paste", function() {
-                var color = $(this).text();
+            $value.on("DOMSubtreeModified input paste change", function() {
+                var color = $(this).val();
 
                 if (color) {
                     _this.setColor(color, false);
@@ -109,7 +108,7 @@ var Palette = (function() {
             $palette.appendTo($container);
 
             if (updatefield !== false) {
-                $value.text(c.tohex());
+                $value.focus().val(c.tohex());
             }
 
             for (var i in c) {
@@ -143,6 +142,7 @@ var Palette = (function() {
     };
 }());
 
-var palette = new Palette();
+var huematic = new Huematic();
 
-palette.showPicker();
+huematic.showPicker();
+huematic.setColor("#f06760");
