@@ -149,3 +149,7 @@ var huematic = new Huematic();
 
 huematic.showPicker();
 huematic.setColor(window.location.hash || "#f06860");
+
+$(window).on("hashchange", function() {
+    huematic.setColor(window.location.hash);
+});
