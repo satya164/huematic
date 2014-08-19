@@ -90,14 +90,15 @@ var Huematic = (function() {
 
         _this.setColor = function(color, updatefield) {
             var c = new Color(color),
+                hex = c.tohex(),
                 $container = $(".palettes-container"),
                 $value = $(".picker-container").find(".picker-item-value"),
                 $palette = $(".palettes-container").find(".palettes");
 
-            if (currentHex === c.tohex()) {
+            if (currentHex === hex) {
                 return;
             } else {
-                currentHex = c.tohex();
+                currentHex = hex;
             }
 
             if ($palette.length) {
@@ -108,8 +109,10 @@ var Huematic = (function() {
             $palette.appendTo($container);
 
             if (updatefield !== false) {
-                $value.focus().val(c.tohex());
+                $value.focus().val(hex);
             }
+
+            window.location.hash = hex;
 
             for (var i in c) {
                 if ((/.*scheme$/i).test(i) && typeof c[i] === "function") {
@@ -145,4 +148,4 @@ var Huematic = (function() {
 var huematic = new Huematic();
 
 huematic.showPicker();
-huematic.setColor("#f06860");
+huematic.setColor(window.location.hash || "#f06860");
